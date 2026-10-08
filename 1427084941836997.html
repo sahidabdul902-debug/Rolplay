@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shopee Agent Roleplay - Pelatihan Komunikasi Positif</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--primary:#EE4D2D;--primary-dark:#D23F20;--primary-light:#FF6B4A;--bg:#0F1117;--surface:#1A1D27;--surface2:#242836;--surface3:#2E3344;--text:#E8E9ED;--text2:#9CA3B0;--green:#22C55E;--green-bg:rgba(34,197,94,0.12);--red:#EF4444;--red-bg:rgba(239,68,68,0.12);--yellow:#F59E0B;--yellow-bg:rgba(245,158,11,0.12);--blue:#3B82F6;--blue-bg:rgba(59,130,246,0.12);--radius:12px;--shadow:0 4px 24px rgba(0,0,0,0.3)}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+.app{display:flex;height:100vh}
+.sidebar{width:260px;background:var(--surface);border-right:1px solid var(--surface3);display:flex;flex-direction:column;flex-shrink:0;transition:transform .3s}
+.sidebar-header{padding:20px;border-bottom:1px solid var(--surface3);display:flex;align-items:center;gap:12px}
+.logo{width:36px;height:36px;background:var(--primary);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;color:#fff}
+.sidebar-header h2{font-size:15px;font-weight:600;color:var(--text)}
+.sidebar-header span{font-size:11px;color:var(--text2);display:block;margin-top:2px}
+.nav{flex:1;padding:12px;overflow-y:auto}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:8px;cursor:pointer;color:var(--text2);font-size:13.5px;transition:.2s;margin-bottom:2px;border:none;background:none;width:100%;text-align:left}
+.nav-item:hover{background:var(--surface2);color:var(--text)}
+.nav-item.active{background:var(--primary);color:#fff}
+.nav-item svg{width:18px;height:18px;flex-shrink:0}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{height:56px;border-bottom:1px solid var(--surface3);display:flex;align-items:center;padding:0 24px;gap:16px;background:var(--surface);flex-shrink:0}
+.topbar h1{font-size:16px;font-weight:600}
+.menu-btn{display:none;background:none;border:none;color:var(--text);cursor:pointer;padding:4px}
+.content{flex:1;overflow-y:auto;padding:24px}
+.page{display:none}
+.page.active{display:block}
+
+/* Dashboard */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px}
+.stat-card{background:var(--surface);border:1px solid var(--surface3);border-radius:var(--radius);padding:20px}
+.stat-card .label{font-size:12px;color:var(--text2);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
+.stat-card .value{font-size:28px;font-weight:700}
+.stat-card .sub{font-size:12px;color:var(--text2);margin-top:4px}
+.stat-card.green .value{color:var(--green)}
+.stat-card.red .value{color:var(--red)}
+.stat-card.yellow .value{color:var(--yellow)}
+.stat-card.blue .value{color:var(--blue)}
+
+/* Database */
+.search-box{background:var(--surface);border:1px solid var(--surface3);border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:10px;margin-bottom:20px}
+.search-box input{flex:1;background:none;border:none;color:var(--text);font-size:14px;outline:none}
+.search-box input::placeholder{color:var(--text2)}
+.category-tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.cat-tab{padding:6px 14px;border-radius:20px;font-size:12px;cursor:pointer;border:1px solid var(--surface3);background:var(--surface);color:var(--text2);transition:.2s;white-space:nowrap}
+.cat-tab:hover,.cat-tab.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.phrase-grid{display:grid;gap:12px}
+.phrase-card{background:var(--surface);border:1px solid var(--surface3);border-radius:var(--radius);padding:16px;transition:.2s}
+.phrase-card:hover{border-color:var(--primary);transform:translateY(-1px)}
+.phrase-neg{display:flex;align-items:flex-start;gap:8px;margin-bottom:10px}
+.phrase-neg .icon{color:var(--red);font-size:16px;flex-shrink:0;margin-top:2px}
+.phrase-neg .text{color:var(--red);font-weight:600;font-size:14px}
+.phrase-pos{display:flex;align-items:flex-start;gap:8px;background:var(--green-bg);padding:10px 12px;border-radius:8px}
+.phrase-pos .icon{color:var(--green);font-size:14px;flex-shrink:0;margin-top:2px}
+.phrase-pos .text{color:var(--green);font-size:13px}
+.cat-label{display:inline-block;padding:3px 8px;border-radius:4px;font-size:10px;background:var(--surface3);color:var(--text2);margin-bottom:8px}
+
+/* Roleplay */
+.roleplay-container{display:flex;gap:20px;height:calc(100vh - 130px)}
+.chat-area{flex:1;display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--surface3);border-radius:var(--radius);overflow:hidden}
+.chat-header{padding:14px 18px;border-bottom:1px solid var(--surface3);display:flex;align-items:center;justify-content:space-between}
+.chat-header .info{display:flex;align-items:center;gap:10px}
+.avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.avatar.customer{background:var(--red-bg);color:var(--red)}
+.avatar.agent{background:var(--blue-bg);color:var(--blue)}
+.chat-messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px}
+.msg{max-width:80%;display:flex;gap:8px;animation:msgIn .3s ease}
+@keyframes msgIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.msg.customer{align-self:flex-start}
+.msg.agent{align-self:flex-end;flex-direction:row-reverse}
+.msg-bubble{padding:10px 14px;border-radius:14px;font-size:13.5px;line-height:1.5}
+.msg.customer .msg-bubble{background:var(--surface2);border-bottom-left-radius:4px}
+.msg.agent .msg-bubble{background:var(--primary);color:#fff;border-bottom-right-radius:4px}
+.msg-avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;margin-top:auto}
+.msg.customer .msg-avatar{background:var(--red-bg);color:var(--red)}
+.msg.agent .msg-avatar{background:var(--blue-bg);color:var(--blue)}
+.chat-input{padding:12px;border-top:1px solid var(--surface3);display:flex;gap:8px}
+.chat-input textarea{flex:1;background:var(--surface2);border:1px solid var(--surface3);border-radius:10px;padding:10px 14px;color:var(--text);font-size:13.5px;resize:none;outline:none;font-family:inherit;min-height:42px;max-height:100px}
+.chat-input textarea:focus{border-color:var(--primary)}
+.send-btn{background:var(--primary);color:#fff;border:none;border-radius:10px;padding:0 16px;cursor:pointer;font-size:14px;transition:.2s;flex-shrink:0}
+.send-btn:hover{background:var(--primary-dark)}
+.send-btn:disabled{opacity:.5;cursor:not-allowed}
+
+.analysis-panel{width:320px;display:flex;flex-direction:column;gap:12px;overflow-y:auto;flex-shrink:0}
+.panel-card{background:var(--surface);border:1px solid var(--surface3);border-radius:var(--radius);padding:16px}
+.panel-card h3{font-size:13px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.score-ring{width:80px;height:80px;position:relative;margin:0 auto 10px}
+.score-ring svg{transform:rotate(-90deg)}
+.score-ring .value{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:20px;font-weight:700}
+.meter{height:6px;background:var(--surface3);border-radius:3px;margin:8px 0;overflow:hidden}
+.meter .fill{height:100%;border-radius:3px;transition:width .5s ease}
+.meter .fill.green{background:var(--green)}
+.meter .fill.yellow{background:var(--yellow)}
+.meter .fill.red{background:var(--red)}
+.flag-item{padding:8px 10px;background:var(--red-bg);border-radius:8px;margin-bottom:6px;font-size:12px;color:var(--red);display:flex;align-items:flex-start;gap:6px}
+.flag-item .alt{color:var(--green);display:block;margin-top:4px}
+.promise-flag{background:var(--yellow-bg);color:var(--yellow)}
+.scenario-btn{width:100%;padding:10px 14px;background:var(--surface2);border:1px solid var(--surface3);border-radius:8px;color:var(--text);font-size:13px;cursor:pointer;text-align:left;transition:.2s;margin-bottom:6px}
+.scenario-btn:hover{border-color:var(--primary);background:var(--surface3)}
+.scenario-btn.active{border-color:var(--primary);background:rgba(238,77,45,0.1)}
+
+/* Scenarios Page */
+.scenarios-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.scenario-card{background:var(--surface);border:1px solid var(--surface3);border-radius:var(--radius);padding:20px;cursor:pointer;transition:.2s}
+.scenario-card:hover{border-color:var(--primary);transform:translateY(-2px);box-shadow:var(--shadow)}
+.scenario-card .emoji{font-size:32px;margin-bottom:12px}
+.scenario-card h3{font-size:14px;margin-bottom:6px}
+.scenario-card p{font-size:12px;color:var(--text2);line-height:1.5}
+.difficulty{display:inline-block;padding:3px 8px;border-radius:4px;font-size:10px;margin-top:8px;font-weight:600}
+.difficulty.easy{background:var(--green-bg);color:var(--green)}
+.difficulty.medium{background:var(--yellow-bg);color:var(--yellow)}
+.difficulty.hard{background:var(--red-bg);color:var(--red)}
+
+.tips-section{margin-top:24px}
+.tips-section h2{font-size:18px;margin-bottom:16px}
+.tip-card{background:var(--surface);border:1px solid var(--surface3);border-radius:var(--radius);padding:16px;margin-bottom:12px}
+.tip-card h4{font-size:13px;color:var(--primary);margin-bottom:6px}
+.tip-card p{font-size:13px;color:var(--text2);line-height:1.6}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600}
+.badge.neg{background:var(--red-bg);color:var(--red)}
+.badge.pos{background:var(--green-bg);color:var(--green)}
+
+.welcome-hero{text-align:center;padding:40px 20px;background:linear-gradient(135deg,rgba(238,77,45,0.1),rgba(238,77,45,0.02));border-radius:var(--radius);margin-bottom:24px;border:1px solid rgba(238,77,45,0.15)}
+.welcome-hero h2{font-size:24px;margin-bottom:8px}
+.welcome-hero p{color:var(--text2);font-size:14px;max-width:500px;margin:0 auto}
+.quick-actions{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:20px}
+.qa-btn{padding:14px;background:var(--surface);border:1px solid var(--surface3);border-radius:10px;cursor:pointer;transition:.2s;text-align:center}
+.qa-btn:hover{border-color:var(--primary);background:var(--surface2)}
+.qa-btn .ico{font-size:24px;margin-bottom:6px}
+.qa-btn .t{font-size:13px;font-weight:600}
+.qa-btn .s{font-size:11px;color:var(--text2);margin-top:2px}
+.empty-state{text-align:center;padding:40px;color:var(--text2)}
+.empty-state .ico{font-size:48px;margin-bottom:12px}
+
+@media(max-width:900px){
+.sidebar{position:fixed;left:0;top:0;bottom:0;z-index:100;transform:translateX(-100%)}
+.sidebar.open{transform:translateX(0)}
+.menu-btn{display:block}
+.roleplay-container{flex-direction:column;height:auto}
+.analysis-panel{width:100%;order:-1}
+.chat-area{min-height:50vh}
+}
+@media(max-width:600px){
+.stats-grid{grid-template-columns:1fr 1fr}
+.scenarios-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar" id="sidebar">
+<div class="sidebar-header">
+<div class="logo">S</div>
+<div><h2>Agent Trainer</h2><span>Komunikasi Positif</span></div>
+</div>
+<nav class="nav">
+<button class="nav-item active" onclick="showPage('dashboard')">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+Dashboard
+</button>
+<button class="nav-item" onclick="showPage('database')">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg>
+Database Frasa
+</button>
+<button class="nav-item" onclick="showPage('roleplay')">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+Roleplay
+</button>
+<button class="nav-item" onclick="showPage('scenarios')">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
+Skenario
+</button>
+<button class="nav-item" onclick="showPage('tips')">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+Tips & Panduan
+</button>
+</nav>
+</aside>
+
+<div class="main">
+<div class="topbar">
+<button class="menu-btn" onclick="document.getElementById('sidebar').classList.toggle('open')">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+</button>
+<h1 id="page-title">Dashboard</h1>
+</div>
+
+<div class="content">
+<!-- DASHBOARD -->
+<div class="page active" id="page-dashboard">
+<div class="welcome-hero">
+<h2>Selamat Datang, Agent!</h2>
+<p>Latih kemampuan komunikasi positif Anda. Hindari kata berkonotasi negatif tanpa membuat janji palsu.</p>
+<div class="quick-actions">
+<div class="qa-btn" onclick="showPage('roleplay')"><div class="ico">💬</div><div class="t">Mulai Roleplay</div><div class="s">Simulasi percakapan</div></div>
+<div class="qa-btn" onclick="showPage('database')"><div class="ico">📖</div><div class="t">Database Frasa</div><div class="s">100+ frasa negatif</div></div>
+<div class="qa-btn" onclick="showPage('scenarios')"><div class="ico">🎯</div><div class="t">Pilih Skenario</div><div class="s">10 skenario latihan</div></div>
+<div class="qa-btn" onclick="showPage('tips')"><div class="ico">💡</div><div class="t">Tips & Panduan</div><div class="s">Teknik komunikasi</div></div>
+</div>
+</div>
+<div class="stats-grid">
+<div class="stat-card blue"><div class="label">Total Sesi Latihan</div><div class="value" id="stat-sessions">0</div><div class="sub">sesi roleplay</div></div>
+<div class="stat-card green"><div class="label">Skor Rata-rata</div><div class="value" id="stat-avg">-</div><div class="sub">dari 100</div></div>
+<div class="stat-card red"><div class="label">Frasa Negatif Terdeteksi</div><div class="value" id="stat-neg">0</div><div class="sub">total terdeteksi</div></div>
+<div class="stat-card yellow"><div class="label">Janji Berlebihan</div><div class="value" id="stat-promise">0</div><div class="sub">total terdeteksi</div></div>
+</div>
+<div style="background:var(--surface);border:1px solid var(--surface3);border-radius:var(--radius);padding:20px">
+<h3 style="font-size:14px;margin-bottom:16px">📊 Riwayat Skor Terakhir</h3>
+<div id="history-list"><div class="empty-state"><div class="ico">📝</div><p>Belum ada riwayat. Mulai latihan roleplay untuk melihat skor Anda.</p></div></div>
+</div>
+</div>
+
+<!-- DATABASE -->
+<div class="page" id="page-database">
+<div class="search-box">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+<input type="text" placeholder="Cari frasa negatif atau alternatif positif..." id="search-input" oninput="filterPhrases()">
+</div>
+<div class="category-tabs" id="cat-tabs"></div>
+<div class="phrase-grid" id="phrase-list"></div>
+</div>
+
+<!-- ROLEPLAY -->
+<div class="page" id="page-roleplay">
+<div class="roleplay-container">
+<div class="chat-area">
+<div class="chat-header">
+<div class="info">
+<div class="avatar customer">😤</div>
+<div><strong id="rp-customer-name">Customer</strong><br><span style="font-size:11px;color:var(--text2)" id="rp-scenario-label">Pilih skenario untuk mulai</span></div>
+</div>
+<button onclick="resetChat()" style="background:var(--surface2);border:1px solid var(--surface3);color:var(--text);padding:6px 12px;border-radius:6px;cursor:pointer;font-size:12px">Reset</button>
+</div>
+<div class="chat-messages" id="chat-messages">
+<div class="empty-state"><div class="ico">💬</div><p>Pilih skenario dari panel kanan atau halaman Skenario, lalu mulai percakapan.</p></div>
+</div>
+<div class="chat-input">
+<textarea id="agent-input" placeholder="Ketik respons Anda sebagai agent..." rows="1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAgentMsg()}" disabled></textarea>
+<button class="send-btn" onclick="sendAgentMsg()" id="send-btn" disabled>Kirim</button>
+</div>
+</div>
+<div class="analysis-panel">
+<div class="panel-card">
+<h3>🎯 Pilih Skenario</h3>
+<div id="rp-scenario-list"></div>
+</div>
+<div class="panel-card">
+<h3>📊 Skor Respons</h3>
+<div style="display:flex;gap:12px;justify-content:center">
+<div style="text-align:center"><div class="score-ring"><svg width="80" height="80"><circle cx="40" cy="40" r="34" fill="none" stroke="var(--surface3)" stroke-width="6"/><circle cx="40" cy="40" r="34" fill="none" stroke="var(--green)" stroke-width="6" stroke-dasharray="213.6" stroke-dashoffset="213.6" stroke-linecap="round" id="score-circle"/></svg><div class="value" id="score-value">-</div></div><div style="font-size:11px;color:var(--text2)">Skor Total</div></div>
+</div>
+<div style="margin-top:12px">
+<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text2)"><span>Empati</span><span id="empathy-pct">-</span></div>
+<div class="meter"><div class="fill green" id="empathy-bar" style="width:0%"></div></div>
+<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text2)"><span>Profesionalisme</span><span id="prof-pct">-</span></div>
+<div class="meter"><div class="fill green" id="prof-bar" style="width:0%"></div></div>
+<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text2)"><span>Solusi</span><span id="sol-pct">-</span></div>
+<div class="meter"><div class="fill green" id="sol-bar" style="width:0%"></div></div>
+</div>
+</div>
+<div class="panel-card">
+<h3>⚠️ Deteksi Masalah</h3>
+<div id="flags-area"><div style="font-size:12px;color:var(--text2);text-align:center;padding:10px">Kirim respons untuk melihat analisis</div></div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- SCENARIOS -->
+<div class="page" id="page-scenarios">
+<h2 style="font-size:18px;margin-bottom:16px">Pilih Skenario Latihan</h2>
+<div class="scenarios-grid" id="scenarios-grid"></div>
+</div>
+
+<!-- TIPS -->
+<div class="page" id="page-tips">
+<div class="tips-section">
+<h2>Panduan Komunikasi Positif untuk Agent</h2>
+<div class="tip-card">
+<h4>1. Teknik Sandwich - Empati → Solusi → Komitmen</h4>
+<p>Selalu awali dengan empati ("Kami memahami perasaan Kakak..."), berikan solusi yang realistis, lalu tutup dengan komitmen tindak lanjut yang terukur. Jangan langsung menolak atau memberi solusi tanpa empati.</p>
+</div>
+<div class="tip-card">
+<h4>2. Ganti "Tidak Bisa" dengan "Yang Bisa Kami Lakukan"</h4>
+<p>Alih-alih berkata <span class="badge neg">✗ Tidak bisa diproses</span>, gunakan <span class="badge pos">✓ Yang bisa kami bantu saat ini adalah...</span>. Fokus pada apa yang BISA dilakukan, bukan apa yang tidak bisa.</p>
+</div>
+<div class="tip-card">
+<h4>3. Hindari Menyalahkan, Fokus Solusi</h4>
+<p>Jangan pernah menyalahkan customer. Alih-alih <span class="badge neg">✗ Kakak seharusnya...</span>, gunakan <span class="badge pos">✓ Untuk ke depannya, Kakak bisa...</span>. Jadikan sebagai saran, bukan kritik.</p>
+</div>
+<div class="tip-card">
+<h4>4. Beri Estimasi Realistis, Bukan Janji Kosong</h4>
+<p>Jangan menjanjikan hal yang tidak pasti. Alih-alih <span class="badge neg">✗ Pasti besok selesai</span>, gunakan <span class="badge pos">✓ Estimasi penyelesaian 2-3 hari kerja, namun kami akan usahakan secepat mungkin</span>.</p>
+</div>
+<div class="tip-card">
+<h4>5. Validasi Perasaan Customer</h4>
+<p>Sebelum memberikan solusi, akui perasaan customer: "Kami sangat memahami kekecewaan Kakak", "Kami turut prihatin atas ketidaknyamanan ini". Ini menunjukkan bahwa Anda peduli.</p>
+</div>
+<div class="tip-card">
+<h4>6. Gunakan Bahasa Kolaboratif</h4>
+<p>Gunakan kata "kita" dan "bersama": <span class="badge pos">✓ Mari kita cari solusi terbaik bersama</span>. Ini membuat customer merasa bahwa Anda ada di pihak mereka.</p>
+</div>
+<div class="tip-card">
+<h4>7. Jangan Meremehkan Masalah</h4>
+<p>Setiap masalah penting bagi customer. Alih-alih <span class="badge neg">✗ Itu hal biasa</span>, gunakan <span class="badge pos">✓ Kami mengerti hal ini sangat mengganggu, dan kami akan prioritaskan penanganannya</span>.</p>
+</div>
+<div class="tip-card">
+<h4>8. Transisi yang Smooth saat Eskalasi</h4>
+<p>Saat harus mengeskalasi, jangan terkesan melempar tanggung jawab. Gunakan: <span class="badge pos">✓ Saya akan hubungkan Kakak dengan tim spesialis kami yang lebih ahli menangani hal ini</span>.</p>
+</div>
+<div class="tip-card">
+<h4>9. Tutup dengan Tindak Lanjut yang Jelas</h4>
+<p>Selalu akhiri dengan langkah selanjutnya yang spesifik: siapa yang akan follow up, kapan, dan melalui channel apa. Ini membangun kepercayaan tanpa janji berlebihan.</p>
+</div>
+<div class="tip-card">
+<h4>10. Kontrol Emosi dan Nada Bicara</h4>
+<p>Meskipun customer emosi, tetap profesional. Hindari nada pasif-agresif seperti <span class="badge neg">✗ Kan sudah saya bilang</span>. Gunakan <span class="badge pos">✓ Baik Kak, saya dengan senang hati jelaskan kembali</span>.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<script>
+// ==================== DATA ====================
+const categories = [
+  {id:'all',name:'Semua Kategori'},
+  {id:'penolakan',name:'Penolakan Langsung'},
+  {id:'menyalahkan',name:'Menyalahkan Customer'},
+  {id:'meremehkan',name:'Meremehkan Masalah'},
+  {id:'ketidakpedulian',name:'Ketidakpedulian'},
+  {id:'menyuruh',name:'Menyuruh Tanpa Empati'},
+  {id:'ancaman',name:'Ancaman Halus'},
+  {id:'janji',name:'Janji Berlebihan'},
+  {id:'pasifagresif',name:'Pasif-Agresif'},
+  {id:'memotong',name:'Membatasi Percakapan'},
+  {id:'umum',name:'Frasa Negatif Umum'},
+];
+
+const phrases = [
+  // Penolakan Langsung
+  {cat:'penolakan',neg:'Tidak bisa',pos:'Yang bisa kami bantu saat ini adalah...'},
+  {cat:'penolakan',neg:'Tidak dapat',pos:'Kami akan carikan alternatif solusi untuk Kakak'},
+  {cat:'penolakan',neg:'Ngga bisa / Ga bisa / Gak bisa',pos:'Untuk kondisi ini, langkah yang bisa kita ambil adalah...'},
+  {cat:'penolakan',neg:'Nggak bisa',pos:'Saat ini kami memiliki opsi lain yang mungkin bisa membantu Kakak'},
+  {cat:'penolakan',neg:'Tidak bisa dibantu',pos:'Kami ingin membantu Kakak, berikut langkah yang bisa kita coba...'},
+  {cat:'penolakan',neg:'Tidak bisa diproses',pos:'Untuk proses ini, ada beberapa syarat yang perlu dipenuhi terlebih dahulu...'},
+  {cat:'penolakan',neg:'Kami tidak bisa melakukan itu',pos:'Untuk permintaan ini, alternatif yang bisa kami tawarkan adalah...'},
+  {cat:'penolakan',neg:'Hal itu tidak mungkin',pos:'Untuk saat ini memang ada keterbatasan, namun kami bisa bantu dengan...'},
+  {cat:'penolakan',neg:'Mustahil / Tidak memungkinkan',pos:'Dengan kondisi saat ini, opsi terbaik yang bisa kami tawarkan adalah...'},
+  {cat:'penolakan',neg:'Itu di luar kemampuan kami',pos:'Untuk hal tersebut, saya akan hubungkan Kakak dengan tim yang tepat'},
+  {cat:'penolakan',neg:'Bukan wewenang kami',pos:'Saya akan eskalasikan ke tim terkait agar bisa ditangani dengan tepat'},
+  {cat:'penolakan',neg:'Kami tidak punya otoritas',pos:'Izinkan saya koordinasikan dengan tim yang memiliki akses untuk hal ini'},
+  {cat:'penolakan',neg:'Saya tidak berwenang',pos:'Saya akan hubungkan dengan pihak yang berwenang untuk membantu Kakak'},
+  // Menyalahkan Customer
+  {cat:'menyalahkan',neg:'Itu salah Kakak / Kakak yang salah',pos:'Kami memahami situasi ini, mari kita cari solusi bersama'},
+  {cat:'menyalahkan',neg:'Kakak seharusnya...',pos:'Untuk ke depannya, Kakak bisa mencoba...'},
+  {cat:'menyalahkan',neg:'Kenapa Kakak tidak...',pos:'Kami sarankan untuk langkah selanjutnya, Kakak bisa...'},
+  {cat:'menyalahkan',neg:'Kakak harusnya baca dulu',pos:'Informasi tersebut memang tertera di halaman produk, namun kami memahami mungkin terlewat. Mari kami bantu'},
+  {cat:'menyalahkan',neg:'Itu bukan kesalahan kami',pos:'Kami akan telusuri penyebabnya dan carikan solusi terbaik'},
+  {cat:'menyalahkan',neg:'Kami tidak bertanggung jawab',pos:'Kami akan koordinasi dengan pihak terkait untuk membantu menyelesaikan ini'},
+  {cat:'menyalahkan',neg:'Kakak kurang teliti',pos:'Memang terkadang detail-detail kecil bisa terlewat, mari kami bantu cek ulang'},
+  {cat:'menyalahkan',neg:'Itu kelalaian Kakak',pos:'Kami mengerti hal ini tidak menyenangkan. Mari kita lihat apa yang bisa dilakukan'},
+  {cat:'menyalahkan',neg:'Kalau Kakak sudah baca syarat & ketentuan...',pos:'Kami akan jelaskan kembali detail ketentuan yang berlaku untuk memastikan kejelasan'},
+  {cat:'menyalahkan',neg:'Seharusnya Kakak lebih hati-hati',pos:'Untuk pengalaman yang lebih baik ke depannya, tips dari kami adalah...'},
+  {cat:'menyalahkan',neg:'Itu risiko Kakak sendiri',pos:'Kami memahami kekhawatiran Kakak, kami akan bantu semaksimal mungkin'},
+  {cat:'menyalahkan',neg:'Kakak yang memilih / Kakak sudah setuju',pos:'Kami mengerti, namun kami tetap ingin memastikan Kakak mendapat pengalaman terbaik'},
+  {cat:'menyalahkan',neg:'Sudah jadi tanggung jawab Kakak',pos:'Kami akan telusuri bersama dan carikan jalan keluar yang terbaik'},
+  // Meremehkan Masalah
+  {cat:'meremehkan',neg:'Itu hal biasa / Banyak yang mengalami',pos:'Kami mengerti hal ini sangat mengganggu dan kami akan prioritaskan'},
+  {cat:'meremehkan',neg:'Itu bukan masalah besar',pos:'Kami memahami ini penting bagi Kakak, dan kami akan tangani dengan serius'},
+  {cat:'meremehkan',neg:'Wajar kok / Itu normal',pos:'Kami memahami perasaan Kakak, izinkan kami bantu cari solusinya'},
+  {cat:'meremehkan',neg:'Ya memang begitu / Emang gitu sistemnya',pos:'Kami memahami keterbatasan ini kurang ideal. Kami akan sampaikan feedback Kakak ke tim terkait'},
+  {cat:'meremehkan',neg:'Mau gimana lagi',pos:'Kami akan usahakan alternatif terbaik yang tersedia'},
+  {cat:'meremehkan',neg:'Ya sudahlah',pos:'Kami tidak ingin Kakak merasa kecewa, izinkan kami bantu dengan...'},
+  {cat:'meremehkan',neg:'Santai aja / Jangan lebay',pos:'Kami sepenuhnya memahami kekhawatiran Kakak dan akan menangani ini segera'},
+  {cat:'meremehkan',neg:'Biasa aja kali / Cuma segitu aja',pos:'Setiap pengalaman Kakak sangat penting bagi kami'},
+  {cat:'meremehkan',neg:'Masalah kecil itu',pos:'Kami akan pastikan masalah ini terselesaikan dengan baik'},
+  {cat:'meremehkan',neg:'Ngga usah dipermasalahkan',pos:'Kami menghargai Kakak sudah menyampaikan hal ini, kami akan tindak lanjuti'},
+  // Ketidakpedulian
+  {cat:'ketidakpedulian',neg:'Saya tidak tahu / Saya kurang tahu',pos:'Saya akan carikan informasi terkait hal ini untuk Kakak'},
+  {cat:'ketidakpedulian',neg:'Saya nggak tahu',pos:'Izinkan saya cek terlebih dahulu agar bisa memberikan informasi yang akurat'},
+  {cat:'ketidakpedulian',neg:'Bukan bagian saya / Bukan urusan saya',pos:'Saya akan hubungkan Kakak dengan tim yang tepat untuk menangani hal ini'},
+  {cat:'ketidakpedulian',neg:'Saya cuma agent',pos:'Saya akan eskalasikan ke tim yang memiliki akses lebih untuk membantu Kakak'},
+  {cat:'ketidakpedulian',neg:'Itu bukan departemen saya',pos:'Izinkan saya koordinasikan dengan departemen terkait untuk membantu'},
+  {cat:'ketidakpedulian',neg:'Coba tanya ke yang lain',pos:'Saya akan carikan pihak yang tepat untuk menjawab pertanyaan Kakak'},
+  {cat:'ketidakpedulian',neg:'Saya tidak bisa bantu',pos:'Izinkan saya cek opsi yang tersedia untuk membantu Kakak'},
+  {cat:'ketidakpedulian',neg:'Terserah Kakak / Ya udah terserah',pos:'Kami menghormati keputusan Kakak, namun kami tetap ingin memastikan Kakak puas'},
+  {cat:'ketidakpedulian',neg:'Silakan saja (dengan nada acuh)',pos:'Tentu Kak, kami akan support apapun keputusan Kakak'},
+  {cat:'ketidakpedulian',neg:'Mau apa lagi?',pos:'Apakah ada hal lain yang bisa saya bantu, Kak?'},
+  {cat:'ketidakpedulian',neg:'Apalagi yang mau ditanyakan?',pos:'Saya dengan senang hati membantu jika ada pertanyaan lain'},
+  {cat:'ketidakpedulian',neg:'Saya sudah jelaskan berkali-kali',pos:'Baik Kak, saya dengan senang hati jelaskan kembali agar lebih jelas'},
+  // Menyuruh Tanpa Empati
+  {cat:'menyuruh',neg:'Kakak harus... / Kakak wajib...',pos:'Kami sarankan Kakak untuk... agar prosesnya lebih lancar'},
+  {cat:'menyuruh',neg:'Pokoknya...',pos:'Langkah yang perlu kita lakukan adalah...'},
+  {cat:'menyuruh',neg:'Tunggu saja / Tunggu aja dulu',pos:'Prosesnya membutuhkan waktu [estimasi], kami akan update Kakak secara berkala'},
+  {cat:'menyuruh',neg:'Sabar ya',pos:'Kami memahami Kakak menunggu, kami akan usahakan prosesnya dipercepat'},
+  {cat:'menyuruh',neg:'Nanti juga selesai',pos:'Kami sedang memproses dan estimasinya dalam [waktu]. Kakak akan mendapat notifikasi'},
+  {cat:'menyuruh',neg:'Ikutin aja prosedurnya',pos:'Izinkan saya pandu Kakak melalui langkah-langkahnya ya'},
+  {cat:'menyuruh',neg:'Baca aja di aplikasi',pos:'Informasinya ada di aplikasi, tapi izinkan saya bantu jelaskan secara langsung'},
+  {cat:'menyuruh',neg:'Cek sendiri / Lihat sendiri di FAQ',pos:'Saya akan bantu carikan informasinya untuk Kakak'},
+  {cat:'menyuruh',neg:'Ya udah lapor aja',pos:'Saya akan bantu Kakak untuk membuat laporan terkait hal ini'},
+  {cat:'menyuruh',neg:'Kirim aja buktinya',pos:'Apakah Kakak bisa bantu kirimkan bukti pendukungnya? Nanti kami akan segera proses'},
+  {cat:'menyuruh',neg:'Coba aja dulu',pos:'Kami sarankan untuk mencoba langkah ini, dan jika ada kendala silakan hubungi kami kembali'},
+  {cat:'menyuruh',neg:'Hubungi sendiri seller-nya',pos:'Kami akan bantu koordinasi dengan seller terkait masalah ini'},
+  // Ancaman Halus
+  {cat:'ancaman',neg:'Kalau Kakak tidak mau, ya sudah',pos:'Kami tetap menghormati keputusan Kakak. Jika berubah pikiran, kami selalu siap membantu'},
+  {cat:'ancaman',neg:'Silakan lapor kemana saja',pos:'Kami memahami kekecewaan Kakak dan kami akan berusaha menyelesaikan masalah ini'},
+  {cat:'ancaman',neg:'Silakan komplain',pos:'Kami sangat menghargai feedback Kakak, dan akan kami jadikan evaluasi'},
+  {cat:'ancaman',neg:'Mau lapor ke mana pun sama saja',pos:'Kami berkomitmen menyelesaikan masalah ini. Mari kita cari jalan keluarnya bersama'},
+  {cat:'ancaman',neg:'Kalau tidak setuju, tidak bisa kami bantu',pos:'Kami mengerti pertimbangan Kakak. Ada beberapa opsi yang bisa kita diskusikan'},
+  {cat:'ancaman',neg:'Itu kebijakan kami, mau tidak mau',pos:'Kebijakan ini memang berlaku, namun mari kita lihat opsi terbaik dalam kerangka ini'},
+  {cat:'ancaman',neg:'Take it or leave it',pos:'Kami menawarkan beberapa pilihan yang mungkin sesuai dengan kebutuhan Kakak'},
+  {cat:'ancaman',neg:'Kami tidak takut dilaporkan',pos:'Kami sangat serius menangani setiap keluhan dan berkomitmen memberikan solusi'},
+  {cat:'ancaman',neg:'Kalau mau cancel ya cancel aja',pos:'Sebelum mengambil keputusan, boleh kami bantu review opsi lain yang tersedia?'},
+  {cat:'ancaman',neg:'Resiko ditanggung sendiri',pos:'Kami akan bantu informasikan semua detail agar Kakak bisa mengambil keputusan terbaik'},
+  // Janji Berlebihan
+  {cat:'janji',neg:'Pasti akan selesai besok',pos:'Estimasi penyelesaiannya 1-2 hari kerja, kami akan usahakan secepat mungkin'},
+  {cat:'janji',neg:'Dijamin pasti berhasil',pos:'Kami akan upayakan yang terbaik untuk menyelesaikan hal ini'},
+  {cat:'janji',neg:'Pasti uangnya kembali',pos:'Proses refund akan kami ajukan dan biasanya memerlukan waktu [estimasi]'},
+  {cat:'janji',neg:'100% akan kami proses',pos:'Kami akan segera memproses dan Kakak akan mendapat update melalui notifikasi'},
+  {cat:'janji',neg:'Saya jamin tidak ada masalah lagi',pos:'Kami akan berusaha agar masalah serupa tidak terulang dan terus melakukan perbaikan'},
+  {cat:'janji',neg:'Besok pasti sampai',pos:'Estimasi pengiriman berdasarkan kurir adalah [tanggal], namun bisa berubah tergantung kondisi'},
+  {cat:'janji',neg:'Pasti aman',pos:'Kami telah menerapkan langkah-langkah keamanan, namun kami sarankan Kakak juga...'},
+  {cat:'janji',neg:'Tidak akan terjadi lagi',pos:'Kami akan berupaya keras agar pengalaman serupa dapat diminimalisir ke depannya'},
+  {cat:'janji',neg:'Pasti cepat kok',pos:'Kami akan usahakan prosesnya berjalan secepat mungkin, estimasinya dalam [waktu]'},
+  // Pasif-Agresif
+  {cat:'pasifagresif',neg:'Kan sudah saya bilang',pos:'Baik Kak, saya dengan senang hati jelaskan kembali'},
+  {cat:'pasifagresif',neg:'Sudah saya jelaskan tadi',pos:'Tentu Kak, tidak masalah. Izinkan saya ulangi penjelasannya'},
+  {cat:'pasifagresif',neg:'Seperti yang sudah saya sampaikan',pos:'Baik, saya akan jelaskan lebih detail lagi ya Kak'},
+  {cat:'pasifagresif',neg:'Bukankah sudah jelas?',pos:'Mungkin saya perlu menjelaskan dengan cara yang berbeda, izinkan saya coba lagi'},
+  {cat:'pasifagresif',neg:'Kakak tidak dengar tadi?',pos:'Mohon maaf jika penjelasan saya kurang jelas. Izinkan saya ulangi'},
+  {cat:'pasifagresif',neg:'Masa tidak paham?',pos:'Tidak masalah Kak, saya akan coba jelaskan dengan lebih sederhana'},
+  {cat:'pasifagresif',neg:'Saya ulangi lagi ya (nada kesal)',pos:'Dengan senang hati saya jelaskan kembali ya Kak'},
+  {cat:'pasifagresif',neg:'Makanya... / Tuh kan... / Nah loh...',pos:'Baik Kak, kami mengerti. Mari kita fokus mencari solusinya'},
+  {cat:'pasifagresif',neg:'Gimana sih?',pos:'Saya mengerti, Kak. Izinkan saya bantu dengan cara yang lebih mudah'},
+  // Membatasi Percakapan
+  {cat:'memotong',neg:'Ada lagi? (bernada mengusir)',pos:'Apakah masih ada yang bisa saya bantu lagi, Kak?'},
+  {cat:'memotong',neg:'Sudah ya Kak (memaksa tutup)',pos:'Apakah Kakak sudah merasa terbantu? Jika masih ada pertanyaan, saya siap membantu'},
+  {cat:'memotong',neg:'Saya tutup ya',pos:'Jika sudah tidak ada pertanyaan lain, terima kasih atas waktunya ya Kak'},
+  {cat:'memotong',neg:'Sudah selesai ya / Tidak ada yang bisa dibantu lagi',pos:'Semoga informasinya membantu. Jangan ragu hubungi kami kembali ya Kak'},
+  {cat:'memotong',neg:'Waktu saya terbatas',pos:'Saya akan berusaha membantu seefektif mungkin agar masalah Kakak terselesaikan'},
+  {cat:'memotong',neg:'Masih ada customer lain',pos:'Baik Kak, saya akan fokus selesaikan masalah Kakak terlebih dahulu'},
+  {cat:'memotong',neg:'Antrian panjang ya Kak',pos:'Saya akan bantu selesaikan dengan sebaik mungkin di sesi ini'},
+  {cat:'memotong',neg:'Bisa dipercepat?',pos:'Tentu Kak, silakan sampaikan semua keluhannya, saya siap membantu'},
+  // Umum
+  {cat:'umum',neg:'Sayangnya...',pos:'Untuk kondisi ini, opsi yang tersedia adalah...'},
+  {cat:'umum',neg:'Maaf ya tapi... (diikuti penolakan)',pos:'Kami memahami situasi Kakak. Izinkan kami tawarkan alternatif berikut...'},
+  {cat:'umum',neg:'Mohon maaf sebesar-besarnya, tapi tidak bisa',pos:'Kami turut prihatin atas ketidaknyamanan ini. Alternatif yang bisa kami tawarkan...'},
+  {cat:'umum',neg:'Sebenarnya sih...',pos:'Berdasarkan informasi yang ada, kondisinya adalah...'},
+  {cat:'umum',neg:'Jujur saja ya... / Terus terang...',pos:'Berdasarkan data yang kami miliki...'},
+  {cat:'umum',neg:'Yang bener aja / Masa sih?',pos:'Kami akan segera verifikasi hal tersebut untuk Kakak'},
+  {cat:'umum',neg:'Serius? / Emangnya?',pos:'Baik Kak, kami akan cek ulang informasinya'},
+];
+
+const scenarios = [
+  {id:0,emoji:'📦',title:'Pesanan Tidak Sampai / Hilang',desc:'Customer mengeluh pesanannya tidak kunjung sampai padahal status sudah delivered. Customer sangat marah karena sudah menunggu lama.',difficulty:'medium',
+   msgs:[
+     'Halo! Saya mau komplain nih, pesanan saya nomor #SP129384756 sudah seminggu tidak sampai! Status di aplikasi sudah delivered tapi saya tidak menerima apapun! Ini bagaimana?!',
+     'Sudah saya cek berkali-kali dan tanya tetangga juga tidak ada! Kurir juga tidak ada yang datang. Uang saya sudah dibayar, barangnya tidak ada. Ini penipuan!',
+     'Saya tidak mau tunggu lagi! Sudah seminggu saya sabar. Kalau tidak ada solusi sekarang, saya akan lapor ke perlindungan konsumen!',
+   ]},
+  {id:1,emoji:'💔',title:'Barang Rusak / Tidak Sesuai',desc:'Customer menerima barang yang rusak atau berbeda dari deskripsi. Merasa tertipu dan ingin pengembalian penuh.',difficulty:'medium',
+   msgs:[
+     'Barang yang saya terima rusak parah! LCD-nya pecah. Padahal di deskripsi dijamin original dan brand new. Saya beli mahal tapi dapatnya barang rusak!',
+     'Saya mau full refund! Seller menipu saya! Saya sudah kirim foto buktinya. Kenapa belum diproses juga?',
+     'Kalau Shopee tidak bisa handle seller nakal seperti ini, buat apa belanja di sini?! Saya kecewa berat!',
+   ]},
+  {id:2,emoji:'💰',title:'Refund Lama / Belum Masuk',desc:'Customer sudah mengajukan refund berminggu-minggu tapi uang belum masuk ke rekening. Semakin frustasi setiap menghubungi CS.',difficulty:'hard',
+   msgs:[
+     'Ini sudah ketiga kalinya saya hubungi soal refund saya yang belum masuk! Sudah 3 minggu dan uang saya belum kembali. Ini nomor laporan #RF8472619!',
+     'Setiap kali saya hubungi selalu diminta tunggu 7-14 hari kerja, tapi sudah lewat! Saya butuh uang itu! Ini bukan jumlah kecil!',
+     'Saya sudah sangat kecewa dengan pelayanan Shopee! Kalau memang tidak bisa refund bilang saja dari awal, jangan PHP!',
+   ]},
+  {id:3,emoji:'🎫',title:'Voucher Tidak Bisa Dipakai',desc:'Customer tidak bisa menggunakan voucher promosi. Merasa dirugikan karena sudah menunggu flash sale.',difficulty:'easy',
+   msgs:[
+     'Saya dapat voucher diskon 50% tapi pas dipakai checkout malah tidak bisa! Error terus. Padahal saya sudah nunggu dari jam 12 malam!',
+     'Ini bohong ya promosinya?! Bikin voucher tapi pas dipakai tidak bisa. Buang-buang waktu saja! Gimana nih tanggung jawabnya?',
+   ]},
+  {id:4,emoji:'🔒',title:'Akun Terkena Suspend',desc:'Customer tiba-tiba tidak bisa mengakses akunnya karena suspend tanpa pemberitahuan. Ada saldo dan pesanan aktif.',difficulty:'hard',
+   msgs:[
+     'Akun saya tiba-tiba di-suspend tanpa alasan! Saya punya saldo ShopeePay Rp 2 juta di sana dan pesanan yang belum sampai! Ini bagaimana?!',
+     'Saya tidak pernah melanggar apapun! Kenapa akun saya bisa di-suspend?! Uang saya bagaimana?! Ini sudah seperti dirampok!',
+     'Tolong jelaskan alasan suspend-nya! Saya berhak tahu! Dan berapa lama prosesnya? Saya tidak terima kalau uang saya hilang begitu saja!',
+   ]},
+  {id:5,emoji:'🙊',title:'Seller Tidak Merespon',desc:'Customer sudah membeli barang tapi seller tidak merespon chat dan tidak kirim pesanan. Merasa diabaikan.',difficulty:'easy',
+   msgs:[
+     'Saya sudah order dari 5 hari lalu tapi seller tidak kirim-kirim juga! Chat juga tidak dibalas sama sekali! Tolong dong dibantu!',
+     'Saya mau cancel dan refund saja kalau memang seller-nya tidak active. Tapi kenapa opsi cancel tidak muncul di aplikasi?',
+   ]},
+  {id:6,emoji:'🚛',title:'Pengiriman Terlambat',desc:'Pesanan melewati estimasi pengiriman. Customer membutuhkan barang untuk acara penting.',difficulty:'medium',
+   msgs:[
+     'Pesanan saya harusnya sudah sampai 3 hari lalu! Saya butuh barang ini untuk acara pernikahan besok! Kenapa bisa terlambat begini?!',
+     'Ini sangat mengecewakan! Saya sudah pilih pengiriman express tapi malah lebih lama dari reguler! Bagaimana kalau barang tidak sampai sebelum acara?!',
+     'Tolong carikan solusi sekarang! Saya tidak butuh maaf, saya butuh barang saya sampai hari ini!',
+   ]},
+  {id:7,emoji:'💳',title:'Harga Berubah Setelah Checkout',desc:'Customer menemukan harga yang dibayar berbeda dari yang ditampilkan sebelum checkout.',difficulty:'medium',
+   msgs:[
+     'Kenapa harga yang saya bayar berbeda dari yang tertera di halaman produk?! Di halaman produk tertulis Rp 150.000 tapi saya dicharge Rp 200.000!',
+     'Saya punya screenshot harga sebelumnya! Ini praktik penipuan namanya! Saya mau selisihnya dikembalikan!',
+   ]},
+  {id:8,emoji:'💸',title:'Double Charge / Pembayaran Ganda',desc:'Saldo customer terpotong dua kali untuk satu pesanan. Sangat panik dan marah.',difficulty:'hard',
+   msgs:[
+     'TOLONG! ShopeePay saya kepotong dua kali untuk pesanan yang sama! Rp 500.000 x 2 = Rp 1.000.000 hilang! Ini nomor pesanan #SP847261!',
+     'Saya cek mutasi ShopeePay dan jelas terpotong 2x! Ini uang bukan mainan! Saya mau uang saya dikembalikan SEKARANG!',
+     'Kalau dalam 24 jam tidak dikembalikan, saya akan posting di media sosial dan viral-kan! Ini tidak benar!',
+   ]},
+  {id:9,emoji:'🎭',title:'Produk Palsu / KW',desc:'Customer menerima produk yang dicurigai palsu, padahal listing menjanjikan produk original.',difficulty:'hard',
+   msgs:[
+     'Saya beli sepatu Nike yang diklaim original di listing tapi yang datang jelas-jelas palsu! Jahitannya berantakan, box-nya beda, tag-nya abal-abal!',
+     'Seller jelas-jelas menipu! Di deskripsi tulis "100% Original" tapi kirim barang KW! Ini sudah masuk penipuan! Saya mau full refund dan seller-nya di-ban!',
+     'Saya tidak mau barang ini! Mau kirim balik pun ongkirnya mahal. Kenapa Shopee tidak filter seller-seller penipu seperti ini?!',
+   ]},
+];
+
+// ==================== NEGATIVE PHRASE DETECTION ====================
+const negPatterns = [
+  // Penolakan
+  {p:/\b(ti?d[ae]?k|ga[k]?|ngg?a[k]?|gak?|tdk|g[ax])\s*(bi?sa|d[ae]?p[ae]?t|bsa|bs)\b/i, cat:'Penolakan Langsung', alt:'Gunakan: "Yang bisa kami bantu saat ini adalah..."'},
+  {p:/\btidak (bisa|dapat) (dibantu|diproses|dilakukan)\b/i, cat:'Penolakan Langsung', alt:'Gunakan: "Untuk proses ini, langkah yang bisa kita ambil..."'},
+  {p:/\b(mustahil|tidak mungkin|tidak memungkinkan)\b/i, cat:'Penolakan Langsung', alt:'Gunakan: "Dengan kondisi saat ini, opsi terbaik adalah..."'},
+  {p:/\bbukan (wewenang|bagian|urusan|departemen|tugas)\s*(kami|saya)\b/i, cat:'Penolakan/Ketidakpedulian', alt:'Gunakan: "Saya akan hubungkan dengan tim yang tepat"'},
+  {p:/\b(di luar kemampuan|tidak punya otoritas|tidak berwenang)\b/i, cat:'Penolakan Langsung', alt:'Gunakan: "Saya akan eskalasikan ke tim terkait"'},
+  // Menyalahkan
+  {p:/\b(itu )?salah (kakak|kamu|anda|kk|ka)\b/i, cat:'Menyalahkan Customer', alt:'Gunakan: "Mari kita cari solusi bersama"'},
+  {p:/\b(kakak|kamu|anda|kk) (seharusnya|harusnya|mestinya)\b/i, cat:'Menyalahkan Customer', alt:'Gunakan: "Untuk ke depannya, Kakak bisa..."'},
+  {p:/\bkenapa (kakak|kamu|anda|kk) (ti?d[ae]?k|ga[k]?|ngg?a[k]?)\b/i, cat:'Menyalahkan Customer', alt:'Gunakan: "Kami sarankan untuk langkah selanjutnya..."'},
+  {p:/\b(kakak|kamu|anda|kk) kurang (teliti|hati.hati)\b/i, cat:'Menyalahkan Customer', alt:'Gunakan: "Detail kecil memang bisa terlewat, mari kami bantu"'},
+  {p:/\b(bukan kesalahan|tidak bertanggung\s*jawab)\s*(kami|saya)\b/i, cat:'Menyalahkan Customer', alt:'Gunakan: "Kami akan telusuri penyebabnya"'},
+  {p:/\b(itu )?kelalaian (kakak|kamu|anda|kk)\b/i, cat:'Menyalahkan Customer', alt:'Gunakan: "Mari kita lihat apa yang bisa dilakukan"'},
+  {p:/\b(risiko|resiko) (kakak|kamu|anda|kk) sendiri\b/i, cat:'Menyalahkan Customer', alt:'Gunakan: "Kami akan bantu semaksimal mungkin"'},
+  // Meremehkan
+  {p:/\b(itu )?(hal biasa|biasa aja|bukan masalah besar|masalah kecil|cuma segitu)\b/i, cat:'Meremehkan Masalah', alt:'Gunakan: "Kami mengerti ini penting bagi Kakak"'},
+  {p:/\b(wajar|normal|emang gitu|memang begitu|mau gimana lagi|ya sudahlah)\b/i, cat:'Meremehkan Masalah', alt:'Gunakan: "Kami memahami perasaan Kakak"'},
+  {p:/\b(santai aja|jangan lebay|ngga usah dipermasalahkan)\b/i, cat:'Meremehkan Masalah', alt:'Gunakan: "Kami sepenuhnya memahami kekhawatiran Kakak"'},
+  // Ketidakpedulian
+  {p:/\bsaya (ti?d[ae]?k|ga[k]?|ngg?a[k]?|kurang) (tahu|tau)\b/i, cat:'Ketidakpedulian', alt:'Gunakan: "Saya akan carikan informasinya untuk Kakak"'},
+  {p:/\b(terserah|ya udah terserah)\s*(kakak|kamu|anda|kk)?\b/i, cat:'Ketidakpedulian', alt:'Gunakan: "Kami menghormati keputusan Kakak"'},
+  {p:/\b(coba tanya ke|tanya aja ke|tanya ke)\s*(yang lain|bagian lain)\b/i, cat:'Ketidakpedulian', alt:'Gunakan: "Saya akan carikan pihak yang tepat"'},
+  {p:/\bsaya (cuma|hanya|sekedar) agent\b/i, cat:'Ketidakpedulian', alt:'Gunakan: "Saya akan eskalasikan ke tim yang lebih ahli"'},
+  {p:/\bsudah (saya )?jelaskan berkali.kali\b/i, cat:'Ketidakpedulian', alt:'Gunakan: "Dengan senang hati saya jelaskan kembali"'},
+  {p:/\b(mau apa lagi|apalagi yang mau)\b/i, cat:'Ketidakpedulian', alt:'Gunakan: "Apakah ada hal lain yang bisa saya bantu?"'},
+  // Menyuruh
+  {p:/\b(kakak|kamu|anda|kk) (harus|wajib|mesti)\b/i, cat:'Menyuruh Tanpa Empati', alt:'Gunakan: "Kami sarankan Kakak untuk..."'},
+  {p:/\bpokoknya\b/i, cat:'Menyuruh Tanpa Empati', alt:'Gunakan: "Langkah yang perlu kita lakukan adalah..."'},
+  {p:/\b(tunggu (saja|aja)|tunggu aja dulu|sabar ya)\b/i, cat:'Menyuruh Tanpa Empati', alt:'Gunakan: "Prosesnya membutuhkan waktu [estimasi]"'},
+  {p:/\b(nanti juga selesai|nanti juga beres)\b/i, cat:'Menyuruh Tanpa Empati', alt:'Gunakan: "Estimasinya dalam [waktu], Kakak akan mendapat notifikasi"'},
+  {p:/\b(ikutin aja|ikuti aja|ikuti saja) prosedur\b/i, cat:'Menyuruh Tanpa Empati', alt:'Gunakan: "Izinkan saya pandu langkah-langkahnya"'},
+  {p:/\b(baca aja|baca saja|cek sendiri|lihat sendiri)\b/i, cat:'Menyuruh Tanpa Empati', alt:'Gunakan: "Saya akan bantu carikan informasinya"'},
+  {p:/\b(hubungi|kontak|telpon) sendiri\b/i, cat:'Menyuruh Tanpa Empati', alt:'Gunakan: "Kami akan bantu koordinasi dengan pihak terkait"'},
+  {p:/\b(kirim aja|kirim saja|lapor aja|lapor saja)\b/i, cat:'Menyuruh Tanpa Empati', alt:'Gunakan: "Saya akan bantu Kakak untuk..."'},
+  // Ancaman
+  {p:/\bsilakan (lapor|komplain|adukan)\b/i, cat:'Ancaman Halus', alt:'Gunakan: "Kami memahami kekecewaan Kakak dan akan berusaha menyelesaikan"'},
+  {p:/\bmau lapor ke\s*mana\s*pun\b/i, cat:'Ancaman Halus', alt:'Gunakan: "Kami berkomitmen menyelesaikan masalah ini"'},
+  {p:/\b(take it or leave it|terima atau tinggalkan)\b/i, cat:'Ancaman Halus', alt:'Gunakan: "Kami menawarkan beberapa pilihan yang mungkin sesuai"'},
+  {p:/\btidak takut dilaporkan\b/i, cat:'Ancaman Halus', alt:'Gunakan: "Kami serius menangani setiap keluhan"'},
+  {p:/\b(mau cancel|mau batal)\s*(ya )?(cancel|batal)\s*(aja|saja)?\b/i, cat:'Ancaman Halus', alt:'Gunakan: "Sebelum memutuskan, boleh kami review opsi lain?"'},
+  {p:/\bkebijakan kami,?\s*(mau tidak mau|mau ga mau)\b/i, cat:'Ancaman Halus', alt:'Gunakan: "Kebijakan ini berlaku, namun mari lihat opsi terbaik"'},
+  // Janji Berlebihan
+  {p:/\bpasti\s+(akan|bisa|selesai|sampai|berhasil|kembali|aman|cepat)\b/i, cat:'Janji Berlebihan', alt:'Gunakan estimasi realistis dengan range waktu'},
+  {p:/\bdijamin\b/i, cat:'Janji Berlebihan', alt:'Gunakan: "Kami akan upayakan yang terbaik"'},
+  {p:/\b100\s*%\s*(akan|pasti|kami)\b/i, cat:'Janji Berlebihan', alt:'Gunakan: "Kami akan segera memproses"'},
+  {p:/\btidak akan terjadi lagi\b/i, cat:'Janji Berlebihan', alt:'Gunakan: "Kami akan berupaya keras agar bisa diminimalisir"'},
+  {p:/\bsaya jamin\b/i, cat:'Janji Berlebihan', alt:'Gunakan: "Kami akan berusaha semaksimal mungkin"'},
+  {p:/\bbesok pasti\b/i, cat:'Janji Berlebihan', alt:'Gunakan: "Estimasinya [range waktu], tergantung kondisi"'},
+  // Pasif-Agresif
+  {p:/\bkan sudah (saya |aku )?(bilang|jelaskan|sampaikan|kasih tahu)\b/i, cat:'Pasif-Agresif', alt:'Gunakan: "Baik Kak, saya jelaskan kembali"'},
+  {p:/\bsudah (saya )?jelaskan tadi\b/i, cat:'Pasif-Agresif', alt:'Gunakan: "Tentu Kak, saya ulangi penjelasannya"'},
+  {p:/\bseperti yang sudah saya (sampaikan|jelaskan)\b/i, cat:'Pasif-Agresif', alt:'Gunakan: "Saya akan jelaskan lebih detail lagi"'},
+  {p:/\b(bukankah|bukannya) sudah jelas\b/i, cat:'Pasif-Agresif', alt:'Gunakan: "Saya coba jelaskan dengan cara yang berbeda"'},
+  {p:/\bmasa (ti?d[ae]?k|ga[k]?|ngg?a[k]?) paham\b/i, cat:'Pasif-Agresif', alt:'Gunakan: "Saya jelaskan dengan lebih sederhana ya"'},
+  {p:/\b(makanya|tuh kan|nah loh|gimana sih)\b/i, cat:'Pasif-Agresif', alt:'Gunakan: "Baik Kak, mari kita fokus mencari solusi"'},
+  // Memotong
+  {p:/\b(waktu saya|waktunya) terbatas\b/i, cat:'Membatasi Percakapan', alt:'Gunakan: "Saya akan membantu seefektif mungkin"'},
+  {p:/\bmasih ada (customer|pelanggan|antrian) lain\b/i, cat:'Membatasi Percakapan', alt:'Gunakan: "Saya fokus selesaikan masalah Kakak dulu"'},
+  {p:/\bantrian panjang\b/i, cat:'Membatasi Percakapan', alt:'Gunakan: "Saya bantu selesaikan sebaik mungkin"'},
+  {p:/\b(bisa dipercepat|cepetan dong)\b/i, cat:'Membatasi Percakapan', alt:'Gunakan: "Silakan sampaikan, saya siap membantu"'},
+  // Umum
+  {p:/\b(yang bener aja|yang bener|masa sih|serius\?|emangnya)\b/i, cat:'Frasa Negatif Umum', alt:'Gunakan: "Kami akan verifikasi hal tersebut"'},
+];
+
+const empathyKeywords = /\b(memahami|mengerti|turut|prihatin|menyesal|maaf atas|mohon maaf|kami paham|saya paham|saya mengerti|kami mengerti|empati|perasaan|kekecewaan|ketidaknyamanan|kekhawatiran)\b/i;
+const solutionKeywords = /\b(solusi|alternatif|opsi|pilihan|langkah|bantu|membantu|proses|tindak lanjut|follow.?up|koordinasi|eskalasi|hubungkan|carikan|usahakan|upayakan)\b/i;
+const profKeywords = /\b(kakak|kak|terima kasih|dengan senang hati|izinkan|mohon|berkenan|kami|silakan|bersedia|informasikan)\b/i;
+
+// ==================== STATE ====================
+let currentCat = 'all';
+let currentScenario = null;
+let chatStep = 0;
+let sessionScores = [];
+let totalNegDetected = 0;
+let totalPromiseDetected = 0;
+
+// ==================== RENDER ====================
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.querySelectorAll('.nav-item')[['dashboard','database','roleplay','scenarios','tips'].indexOf(id)].classList.add('active');
+  const titles={dashboard:'Dashboard',database:'Database Frasa Negatif',roleplay:'Roleplay Simulasi',scenarios:'Skenario Latihan',tips:'Tips & Panduan'};
+  document.getElementById('page-title').textContent=titles[id];
+  document.getElementById('sidebar').classList.remove('open');
+}
+
+function renderCatTabs(){
+  const el=document.getElementById('cat-tabs');
+  el.innerHTML=categories.map(c=>`<div class="cat-tab${c.id===currentCat?' active':''}" onclick="setCat('${c.id}')">${c.name}</div>`).join('');
+}
+
+function setCat(id){currentCat=id;renderCatTabs();filterPhrases()}
+
+function filterPhrases(){
+  const q=(document.getElementById('search-input').value||'').toLowerCase();
+  const el=document.getElementById('phrase-list');
+  let filtered=phrases;
+  if(currentCat!=='all') filtered=filtered.filter(p=>p.cat===currentCat);
+  if(q) filtered=filtered.filter(p=>p.neg.toLowerCase().includes(q)||p.pos.toLowerCase().includes(q));
+  const catNames={penolakan:'Penolakan Langsung',menyalahkan:'Menyalahkan Customer',meremehkan:'Meremehkan Masalah',ketidakpedulian:'Ketidakpedulian',menyuruh:'Menyuruh Tanpa Empati',ancaman:'Ancaman Halus',janji:'Janji Berlebihan',pasifagresif:'Pasif-Agresif',memotong:'Membatasi Percakapan',umum:'Frasa Negatif Umum'};
+  el.innerHTML=filtered.length?filtered.map(p=>`<div class="phrase-card"><div class="cat-label">${catNames[p.cat]||p.cat}</div><div class="phrase-neg"><span class="icon">✗</span><span class="text">${p.neg}</span></div><div class="phrase-pos"><span class="icon">✓</span><span class="text">${p.pos}</span></div></div>`).join(''):'<div class="empty-state"><div class="ico">🔍</div><p>Tidak ditemukan frasa yang cocok</p></div>';
+}
+
+function renderScenarioBtns(){
+  const el=document.getElementById('rp-scenario-list');
+  el.innerHTML=scenarios.map(s=>`<button class="scenario-btn${currentScenario&&currentScenario.id===s.id?' active':''}" onclick="startScenario(${s.id})">${s.emoji} ${s.title}</button>`).join('');
+}
+
+function renderScenariosPage(){
+  const el=document.getElementById('scenarios-grid');
+  el.innerHTML=scenarios.map(s=>`<div class="scenario-card" onclick="startScenario(${s.id});showPage('roleplay')"><div class="emoji">${s.emoji}</div><h3>${s.title}</h3><p>${s.desc}</p><span class="difficulty ${s.difficulty}">${s.difficulty==='easy'?'Mudah':s.difficulty==='medium'?'Menengah':'Sulit'}</span></div>`).join('');
+}
+
+function startScenario(id){
+  currentScenario=scenarios[id];
+  chatStep=0;
+  const msgs=document.getElementById('chat-messages');
+  msgs.innerHTML='';
+  document.getElementById('rp-customer-name').textContent='Customer Marah';
+  document.getElementById('rp-scenario-label').textContent=currentScenario.title;
+  document.getElementById('agent-input').disabled=false;
+  document.getElementById('send-btn').disabled=false;
+  document.getElementById('flags-area').innerHTML='<div style="font-size:12px;color:var(--text2);text-align:center;padding:10px">Kirim respons untuk melihat analisis</div>';
+  resetScores();
+  renderScenarioBtns();
+  // Send first customer message
+  addCustomerMsg(currentScenario.msgs[0]);
+  chatStep=1;
+}
+
+function addCustomerMsg(text){
+  const msgs=document.getElementById('chat-messages');
+  const div=document.createElement('div');
+  div.className='msg customer';
+  div.innerHTML=`<div class="msg-avatar">😤</div><div class="msg-bubble">${text}</div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop=msgs.scrollHeight;
+}
+
+function addAgentMsg(text){
+  const msgs=document.getElementById('chat-messages');
+  const div=document.createElement('div');
+  div.className='msg agent';
+  div.innerHTML=`<div class="msg-avatar">🎧</div><div class="msg-bubble">${text}</div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop=msgs.scrollHeight;
+}
+
+function addSystemMsg(html){
+  const msgs=document.getElementById('chat-messages');
+  const div=document.createElement('div');
+  div.style.cssText='text-align:center;padding:8px;font-size:12px;color:var(--text2)';
+  div.innerHTML=html;
+  msgs.appendChild(div);
+  msgs.scrollTop=msgs.scrollHeight;
+}
+
+function sendAgentMsg(){
+  const input=document.getElementById('agent-input');
+  const text=input.value.trim();
+  if(!text||!currentScenario) return;
+  addAgentMsg(text);
+  input.value='';
+  input.style.height='42px';
+  analyzeResponse(text);
+  // Send next customer message after delay
+  setTimeout(()=>{
+    if(chatStep<currentScenario.msgs.length){
+      addCustomerMsg(currentScenario.msgs[chatStep]);
+      chatStep++;
+    } else {
+      addSystemMsg('🎉 <b>Skenario selesai!</b> Lihat skor akhir di panel kanan. Anda bisa reset dan coba skenario lain.');
+      document.getElementById('agent-input').disabled=true;
+      document.getElementById('send-btn').disabled=true;
+      saveSession();
+    }
+  },1200);
+}
+
+function analyzeResponse(text){
+  const flags=[];
+  const promiseFlags=[];
+  negPatterns.forEach(np=>{
+    if(np.p.test(text)){
+      const m=text.match(np.p);
+      if(np.cat==='Janji Berlebihan'){
+        promiseFlags.push({match:m[0],cat:np.cat,alt:np.alt});
+      } else {
+        flags.push({match:m[0],cat:np.cat,alt:np.alt});
+      }
+    }
+  });
+  totalNegDetected+=flags.length;
+  totalPromiseDetected+=promiseFlags.length;
+  // Scoring
+  const hasEmpathy=empathyKeywords.test(text);
+  const hasSolution=solutionKeywords.test(text);
+  const hasProf=profKeywords.test(text);
+  const negPenalty=(flags.length+promiseFlags.length)*15;
+  let empScore=hasEmpathy?85+Math.random()*15:30+Math.random()*20;
+  let profScore=hasProf?80+Math.random()*20:40+Math.random()*20;
+  let solScore=hasSolution?80+Math.random()*20:35+Math.random()*20;
+  empScore=Math.max(0,Math.min(100,empScore-negPenalty*0.5));
+  profScore=Math.max(0,Math.min(100,profScore-negPenalty*0.7));
+  solScore=Math.max(0,Math.min(100,solScore-negPenalty*0.3));
+  const total=Math.round((empScore+profScore+solScore)/3);
+  updateScoreUI(total,empScore,profScore,solScore);
+  // Flags
+  const flagsArea=document.getElementById('flags-area');
+  let html='';
+  if(flags.length===0&&promiseFlags.length===0){
+    html='<div style="padding:10px;background:var(--green-bg);border-radius:8px;font-size:12px;color:var(--green);text-align:center">✓ Tidak ada frasa negatif atau janji berlebihan terdeteksi. Bagus!</div>';
+  }
+  flags.forEach(f=>{
+    html+=`<div class="flag-item"><span>⚠️</span><div><b>"${f.match}"</b> — ${f.cat}<span class="alt">💡 ${f.alt}</span></div></div>`;
+  });
+  promiseFlags.forEach(f=>{
+    html+=`<div class="flag-item promise-flag"><span>⚡</span><div><b>"${f.match}"</b> — ${f.cat}<span class="alt" style="color:var(--green)">💡 ${f.alt}</span></div></div>`;
+  });
+  flagsArea.innerHTML=html;
+  sessionScores.push(total);
+}
+
+function updateScoreUI(total,emp,prof,sol){
+  const circle=document.getElementById('score-circle');
+  const circumference=213.6;
+  circle.style.strokeDashoffset=circumference-(total/100)*circumference;
+  circle.style.stroke=total>=70?'var(--green)':total>=40?'var(--yellow)':'var(--red)';
+  document.getElementById('score-value').textContent=total;
+  document.getElementById('empathy-pct').textContent=Math.round(emp)+'%';
+  document.getElementById('empathy-bar').style.width=emp+'%';
+  document.getElementById('empathy-bar').className='fill '+(emp>=70?'green':emp>=40?'yellow':'red');
+  document.getElementById('prof-pct').textContent=Math.round(prof)+'%';
+  document.getElementById('prof-bar').style.width=prof+'%';
+  document.getElementById('prof-bar').className='fill '+(prof>=70?'green':prof>=40?'yellow':'red');
+  document.getElementById('sol-pct').textContent=Math.round(sol)+'%';
+  document.getElementById('sol-bar').style.width=sol+'%';
+  document.getElementById('sol-bar').className='fill '+(sol>=70?'green':sol>=40?'yellow':'red');
+}
+
+function resetScores(){
+  sessionScores=[];
+  document.getElementById('score-value').textContent='-';
+  document.getElementById('score-circle').style.strokeDashoffset='213.6';
+  ['empathy','prof','sol'].forEach(k=>{
+    document.getElementById(k+'-pct').textContent='-';
+    document.getElementById(k+'-bar').style.width='0%';
+  });
+}
+
+function resetChat(){
+  if(currentScenario) startScenario(currentScenario.id);
+}
+
+let allSessions=[];
+function saveSession(){
+  if(sessionScores.length===0) return;
+  const avg=Math.round(sessionScores.reduce((a,b)=>a+b,0)/sessionScores.length);
+  allSessions.push({scenario:currentScenario.title,score:avg,date:new Date().toLocaleString('id-ID')});
+  updateDashboard();
+}
+
+function updateDashboard(){
+  document.getElementById('stat-sessions').textContent=allSessions.length;
+  document.getElementById('stat-neg').textContent=totalNegDetected;
+  document.getElementById('stat-promise').textContent=totalPromiseDetected;
+  if(allSessions.length>0){
+    const avgAll=Math.round(allSessions.reduce((a,b)=>a+b.score,0)/allSessions.length);
+    document.getElementById('stat-avg').textContent=avgAll;
+    const hist=document.getElementById('history-list');
+    hist.innerHTML=allSessions.slice(-10).reverse().map(s=>{
+      const color=s.score>=70?'var(--green)':s.score>=40?'var(--yellow)':'var(--red)';
+      return `<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--surface3)"><div><strong style="font-size:13px">${s.scenario}</strong><br><span style="font-size:11px;color:var(--text2)">${s.date}</span></div><span style="font-size:18px;font-weight:700;color:${color}">${s.score}</span></div>`;
+    }).join('');
+  }
+}
+
+// Auto-resize textarea
+document.getElementById('agent-input').addEventListener('input',function(){
+  this.style.height='42px';
+  this.style.height=Math.min(this.scrollHeight,100)+'px';
+});
+
+// Init
+renderCatTabs();
+filterPhrases();
+renderScenarioBtns();
+renderScenariosPage();
+</script>
+</body>
+</html>
